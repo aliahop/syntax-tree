@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Paraphrase API</title>
+</head>
+<body>
+  <h1>Paraphrase API</h1>
+  <form>
+    <label for="tree">Enter syntactic tree:</label>
+    <input type="text" id="tree" name="tree"><br>
+    <label for="limit">Maximum number of paraphrases:</label>
+    <input type="number" id="limit" name="limit" value="20"><br>
+    <button type="submit" id="submit-btn">Paraphrase</button>
+  </form>
+  <div id="results"></div>
+  <script>
+    const form = document.querySelector('form');
+    const resultsDiv = document.getElementById('results');
+
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      const tree = document.getElementById('tree').value;
+      const limit = document.getElementById('limit').value || 20;
+
+      fetch(`/paraphrase?tree=${encodeURIComponent(tree)}&limit=${encodeURIComponent(limit)}`)
+        .then(response => response.json())
+        .then(paraphrases => {
+          resultsDiv.innerHTML = '';
+          paraphrases.forEach(paraphrase => {
+            const paraphraseEl = document.createElement('p');
+            paraphraseEl.textContent = paraphrase;
+            resultsDiv.appendChild(paraphraseEl);
+          });
+        })
+        .catch(error => {
+          resultsDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+        });
+    });
+  </script>
+</body>
+</html>
